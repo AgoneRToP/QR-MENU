@@ -8,8 +8,8 @@ const apiRouter = Router();
 
 apiRouter
   .use("/auth", authRouter)
-  .use("/categories", categoryRouter)
-  .use("/products", productRouter)
-  .use("/feedback", feedbackRouter);
+  // .use("/categories", categoryRouter)
+  // .use("/products", productRouter)
+  // .use("/feedback", feedbackRouter);
 
 export default apiRouter;

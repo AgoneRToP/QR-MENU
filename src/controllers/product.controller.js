@@ -13,4 +13,4 @@ class ProductController {
   getProductFromCategory = async (req, res) => {};
 }
 
-export default ProductController;
+export default new ProductController();

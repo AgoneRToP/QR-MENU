@@ -11,4 +11,4 @@ class FeedbackController {
   getAll = async (req, res) => {};
 }
 
-export default FeedbackController;
+export default new FeedbackController();

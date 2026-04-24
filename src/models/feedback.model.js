@@ -22,7 +22,7 @@ const FeedbackSchema = new Schema(
       ref: "Category",
     },
     created_at: {
-      type: mongoose.Schema.Types.String,
+      type: SchemaTypes.String,
       ref: "User",
     },
   },

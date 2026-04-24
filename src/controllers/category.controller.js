@@ -11,4 +11,4 @@ class CategoryController {
   getAll = async (req, res) => {};
 }
 
-export default CategoryController;
+export default new CategoryController();
