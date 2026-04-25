@@ -1,7 +1,7 @@
 // Models
 import { User } from "../models/user.model.js";
 // Dependencies
-import { hash, compare } from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { config } from "winston";
 // Configs
@@ -123,13 +123,13 @@ class AuthController {
   };
 
   #_hashPassword = async (pass) => {
-    const hashedPass = await hash(pass, 20);
+    const hashedPass = await bcrypt.hash(pass, 20);
 
     return hashedPass;
   };
 
   #_comparePass = async (originalPass, hashedPass) => {
-    const isSame = await compare(originalPass, hashedPass);
+    const isSame = await bcrypt.compare(originalPass, hashedPass);
 
     return isSame;
   };

@@ -62,6 +62,24 @@ app
     res.render("feedback", { cssFile: "style" });
   });
 
+app
+  .post("/auth/login", (req, res) => {
+    res.send("login ok");
+  })
+  .post("/auth/register", (req, res) => {
+    console.log(req.body);
+    res.send("register ok");
+  })
+  .post("/products", (req, res) => {
+    res.send("products ok");
+  })
+  .post("/categories", (req, res) => {
+    res.send("categories ok");
+  })
+  .post("/feedback", (req, res) => {
+    res.send("feedback ok");
+  });
+
 app.listen(appConfig.APP_PORT, () => {
   console.log(`http://localhost:${appConfig.APP_PORT}`);
 });
