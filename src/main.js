@@ -1,37 +1,63 @@
 import express from "express";
-import apiRouter from "./routes/index.js";
-import appConfig from "./configs/app.config.js";
 import path from "node:path";
-import { engine } from "express-handlebars";
 import cookieParser from "cookie-parser";
+import { engine } from "express-handlebars";
+
 import { connectDB } from "./configs/database.js";
+import appConfig from "./configs/app.config.js";
+
+// routes
+import homeRouter from "./routes/home.js";
+import categoryRouter from "./routes/category.route.js";
+import productRouter from "./routes/product.route.js";
+import feedbackRouter from "./routes/feedback.route.js";
+import apiRouter from "./routes/index.js";
 
 const app = express();
 
-app.engine(`hbs`, engine({ extname: `hbs` }));
-app.set(`view engine`, `hbs`);
-app.set(`views`, path.join(process.cwd(), `src`, `views`));
+// HBS
+app.engine(
+  "hbs",
+  engine({
+    extname: "hbs",
+    defaultLayout: "main",
+    layoutsDir: path.join(process.cwd(), "src", "views", "layouts"),
+    partialsDir: path.join(process.cwd(), "src", "views", "partials"),
+  }),
+);
 
+app.set("view engine", "hbs");
+app.set("views", path.join(process.cwd(), "src", "views"));
+
+// middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET_KEY));
 
-app.use(express.urlencoded({ extended: true }));
-
+// static
 app.use("/public", express.static(path.join(process.cwd(), "src", "public")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+// DB
 connectDB()
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+  .then(() => console.log("DB connected"))
+  .catch(console.log);
 
+// routes
+app.use("/", homeRouter);
+app.use("/categories", categoryRouter);
+app.use("/products", productRouter);
+app.use("/feedback", feedbackRouter);
 app.use("/api", apiRouter);
 
-app
-  .get("/register", (req, res) => {
-    res.render("register", { cssFile: "auth" });
-  })
-  .get("/login", (req, res) => {
-    res.render("login", { cssFile: "auth" });
-  });
+// auth pages
+app.get("/login", (req, res) => {
+  res.render("login", { cssFile: "auth" });
+});
+
+app.get("/register", (req, res) => {
+  res.render("register", { cssFile: "auth" });
+});
 
 app.listen(appConfig.APP_PORT, () => {
   console.log(`http://localhost:${appConfig.APP_PORT}`);

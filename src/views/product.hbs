@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Products</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Products</h1>
+
+  <form action="/products" method="POST" class="form">
+    <input type="text" name="name" placeholder="Product name" required>
+    <input type="number" name="price" placeholder="Price" required>
+
+    <select name="category_id" required>
+      {{#each categories}}
+        <option value="{{this._id}}">{{this.name}}</option>
+      {{/each}}
+    </select>
+
+    <input type="text" name="image" placeholder="Image URL" required>
+
+    <button type="submit">Add Product</button>
+  </form>
+
+  <div class="list">
+    {{#each products}}
+      <div class="card">
+        <img src="{{this.image}}" alt="{{this.name}}">
+        <h3>{{this.name}}</h3>
+        <p>${{this.price}}</p>
+        <p>Category: {{this.category_id.name}}</p>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+</body>
+</html>

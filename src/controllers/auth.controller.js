@@ -20,95 +20,90 @@ class AuthController {
     this.#_userModel = User;
   }
 
-  register = async (req, res) => {
-    const { name, email, password } = req.body;
+  register = async (req, res, next) => {
+    try {
+      const { name, email, password } = req.body;
 
-    const existingUser = await this.#_userModel.findOne({ email });
+      const existingUser = await this.#_userModel.findOne({ email });
+      if (existingUser) throw new ConflictException("Email already taken");
 
-    if (existingUser) {
-      throw new ConflictException("Email already taken");
+      const hashedPass = await this.#_hashPassword(password);
+
+      const newUser = await this.#_userModel.create({
+        name,
+        email,
+        password: hashedPass,
+        role: "USER",
+      });
+
+      const accessToken = this.#_generateAccessToken({
+        id: newUser._id,
+        email: newUser.email,
+        role: newUser.role,
+      });
+
+      res.send({
+        success: true,
+        data: newUser,
+        accessToken,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const hashedPass = await this.#_hashPassword(password);
-
-    const newUser = await this.#_userModel.insertOne({
-      name,
-      email,
-      password: hashedPass,
-      role: `USER`,
-    });
-
-    const token = this.#_generateAccessToken({
-      email: newUser.email,
-      role: newUser.role,
-    });
-
-    res.send({
-      success: true,
-      data: newUser,
-      token,
-    });
   };
 
-  login = async (req, res) => {
-    const { email, password } = req.body;
+  login = async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
 
-    console.log(req.cookies, "cookies");
-    console.log(req.signedCookie, "signed cookies");
+      const existingUser = await this.#_userModel.findOne({ email });
+      if (!existingUser) throw new NotFoundException("User not found");
 
-    const existingUser = await this.#_userModel.findOne({ email });
+      const isPassSame = await this.#_comparePass(
+        password,
+        existingUser.password
+      );
 
-    if (!existingUser) {
-      throw new NotFoundException("User not found");
+      if (!isPassSame) {
+        throw new ConflictException("Invalid password");
+      }
+
+      const accessToken = this.#_generateAccessToken({
+        id: existingUser._id,
+        email: existingUser.email,
+        role: existingUser.role,
+      });
+
+      const refreshToken = this.#_generateRefreshToken({
+        id: existingUser._id,
+      });
+
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        signed: true,
+        maxAge: 15 * 60 * 1000, // 15 минут
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        signed: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+      });
+
+      res.send({
+        success: true,
+        data: existingUser,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    const isPassSame = await this.#_comparePass(
-      password,
-      existingUser.password,
-    );
-
-    if (!isPassSame) {
-      throw new ConflictException("Given password is invalid");
-    }
-
-    // token generation
-
-    const accessToken = this.#_generateAccessToken({
-      email: existingUser.email,
-      role: existingUser.role,
-    });
-
-    const refreshToken = this.#_generateRefreshToken({
-      username: existingUser.username,
-    });
-
-    res.cookie("token", token, {
-      signed: true,
-      expires: new Date(Date.now() + 5_000),
-      // expires: "1h",
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      signed: true,
-      expires: new Date(Date.now() + 5_000),
-      // expires: "7d",
-    });
-
-    res.send({
-      success: true,
-      data: existingUser,
-      accessToken,
-      refreshToken,
-    });
   };
 
-  refresh = async (req, res) => {
+  refresh = async (req, res, next) => {
     try {
       const { refreshToken } = req.body;
 
-      if (!refreshToken) {
-        throw new BadRequestException("Token not given");
-      }
+      if (!refreshToken) throw new BadRequestException("Token not given");
 
       const payload = jwt.verify(
         refreshToken,

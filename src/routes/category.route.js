@@ -1,10 +1,15 @@
 import { Router } from "express";
-import CategoryController from "../controllers/category.controller.js";
+import { Category } from "../models/category.model.js";
 
-const categoryRouter = Router();
+const router = Router();
 
-categoryRouter
-  .post("/", CategoryController.create)
-  .get("/", CategoryController.getAll);
+router.get("/", async (req, res) => {
+  const categories = await Category.find().sort({ createdAt: -1 });
 
-export default categoryRouter;
+  res.render("category", {
+    cssFile: "style",
+    categories,
+  });
+});
+
+export default router;

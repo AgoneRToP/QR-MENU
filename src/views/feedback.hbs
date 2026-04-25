@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feedback</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Feedback</h1>
+
+  <form action="/feedbacks" method="POST" class="form">
+    <textarea name="message" placeholder="Your feedback..." required></textarea>
+
+    <select name="type">
+      <option value="REVIEW">Review</option>
+      <option value="COMPLAINT">Complaint</option>
+    </select>
+
+    <input type="text" name="image" placeholder="Image URL">
+
+    <select name="product_id" required>
+      {{#each products}}
+        <option value="{{this._id}}">{{this.name}}</option>
+      {{/each}}
+    </select>
+
+    <button type="submit">Send</button>
+  </form>
+
+  <div class="list">
+    {{#each feedbacks}}
+      <div class="card">
+        <p>{{this.message}}</p>
+        <span class="badge">{{this.type}}</span>
+        <p>Product: {{this.product_id.name}}</p>
+
+        {{#if this.image}}
+          <img src="{{this.image}}" alt="feedback image">
+        {{/if}}
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,11 +1,18 @@
 import { Router } from "express";
-import ProductController from "../controllers/product.controller.js";
+import { Product } from "../models/product.model.js";
+import { Category } from "../models/category.model.js";
 
-const productRouter = Router();
+const router = Router();
 
-productRouter
-  .post("/", ProductController.create)
-  .get("/", ProductController.getAll)
-  .get("/", ProductController.getProductFromCategory);
+router.get("/", async (req, res) => {
+  const products = await Product.find().populate("category_id");
+  const categories = await Category.find();
 
-export default productRouter;
+  res.render("product", {
+    cssFile: "style",
+    products,
+    categories,
+  });
+});
+
+export default router;

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Categories</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Categories</h1>
+
+  <form action="/categories" method="POST" class="form">
+    <input type="text" name="name" placeholder="Category name" required>
+    <button type="submit">Add Category</button>
+  </form>
+
+  <div class="list">
+    {{#each categories}}
+      <div class="card">
+        <h3>{{this.name}}</h3>
+        <p>Created: {{this.createdAt}}</p>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+</body>
+</html>

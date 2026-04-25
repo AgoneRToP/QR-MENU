@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restaurant Home</title>
+  <link rel="stylesheet" href="/public/css/{{cssFile}}.css">
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <h1>Welcome to Our Restaurant 🍽️</h1>
+    <p>Fresh food, best taste, fast service</p>
+  </header>
+
+  <!-- 🍴 MENU CATEGORIES -->
+  <section>
+    <h2>Menu Categories</h2>
+
+    <div class="list">
+      {{#each categories}}
+        <div class="card">
+          <h3>{{this.name}}</h3>
+          <a href="/products?category={{this._id}}">View dishes</a>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 🍜 DISHES -->
+  <section>
+    <h2>Popular Dishes</h2>
+
+    <div class="list">
+      {{#each products}}
+        <div class="card">
+          <img src="{{this.image}}" alt="{{this.name}}">
+          <h3>{{this.name}}</h3>
+
+          <p class="price">${{this.price}}</p>
+
+          {{#if this.category_id}}
+            <p>Category: {{this.category_id.name}}</p>
+          {{/if}}
+
+          <a href="/products/{{this._id}}">Order / Details</a>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- 💬 REVIEWS -->
+  <section>
+    <h2>Customer Reviews</h2>
+
+    <div class="list">
+      {{#each feedbacks}}
+        <div class="card">
+          <p>{{this.message}}</p>
+
+          <span class="badge">{{this.type}}</span>
+
+          {{#if this.image}}
+            <img src="{{this.image}}" alt="review image">
+          {{/if}}
+
+          <small>Dish: {{this.product_id.name}}</small>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

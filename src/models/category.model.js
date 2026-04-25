@@ -6,18 +6,20 @@ const CategorySchema = new Schema(
       type: SchemaTypes.String,
       required: true,
       min: [3, "The category name must be at least 3 characters long."],
+      trim: true,
+      unique: true,
     },
-    category_id: {
+    user_id: {
       type: SchemaTypes.ObjectId,
       required: true,
-      ref: "Category",
+      ref: "User",
     },
   },
   {
     timestamps: true,
     versionKey: false,
-    colletion: "categories",
+    collection: "categories",
   },
 );
 
-export const Category = model("CategorY", CategorySchema);
+export const Category = model("Category", CategorySchema);

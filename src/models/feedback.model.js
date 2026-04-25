@@ -14,22 +14,23 @@ const FeedbackSchema = new Schema(
     },
     image: {
       type: SchemaTypes.String,
-      required: true,
+      default: null,
     },
-    device_info: {
+    user_id: {
       type: SchemaTypes.ObjectId,
-      required: true,
-      ref: "Category",
-    },
-    created_at: {
-      type: SchemaTypes.String,
       ref: "User",
+      required: true,
+    },
+    product_id: {
+      type: SchemaTypes.ObjectId,
+      ref: "Product",
+      required: true,
     },
   },
   {
     timestamps: true,
     versionKey: false,
-    colletion: "feedbacks",
+    collection: "feedbacks",
   },
 );
 
