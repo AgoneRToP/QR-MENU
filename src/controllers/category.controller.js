@@ -27,7 +27,7 @@ class CategoryController {
         user_id,
       });
 
-      res.status(201).json(category);
+      res.status(201).send(category);
     } catch (error) {
       next(error)
     }
@@ -39,7 +39,7 @@ class CategoryController {
         .find()
         .populate("user_id", "name email");
 
-      res.json(categories);
+      res.send(categories);
     } catch (error) {
       next(error)
     }

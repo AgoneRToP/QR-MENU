@@ -23,7 +23,7 @@ class FeedbackController {
         user_id,
       });
 
-      res.status(201).json({
+      res.status(201).send({
         success: true,
         data: feedback,
       });
@@ -40,7 +40,7 @@ class FeedbackController {
         .populate("user_id", "name email")
         .populate("product_id", "name price");
 
-      res.json({
+      res.send({
         success: true,
         data: feedbacks,
       });

@@ -8,9 +8,6 @@ import appConfig from "./configs/app.config.js";
 
 // routes
 import homeRouter from "./routes/home.js";
-import categoryRouter from "./routes/category.route.js";
-import productRouter from "./routes/product.route.js";
-import feedbackRouter from "./routes/feedback.route.js";
 import apiRouter from "./routes/index.js";
 
 const app = express();
@@ -45,19 +42,25 @@ connectDB()
 
 // routes
 app.use("/", homeRouter);
-app.use("/categories", categoryRouter);
-app.use("/products", productRouter);
-app.use("/feedback", feedbackRouter);
 app.use("/api", apiRouter);
 
 // auth pages
-app.get("/login", (req, res) => {
-  res.render("login", { cssFile: "auth" });
-});
-
-app.get("/register", (req, res) => {
-  res.render("register", { cssFile: "auth" });
-});
+app
+  .get("/auth/login", (req, res) => {
+    res.render("login", { cssFile: "auth" });
+  })
+  .get("/auth/register", (req, res) => {
+    res.render("register", { cssFile: "auth" });
+  })
+  .get("/products", (req, res) => {
+    res.render("product", { cssFile: "style" });
+  })
+  .get("/categories", (req, res) => {
+    res.render("category", { cssFile: "style" });
+  })
+  .get("/feedback", (req, res) => {
+    res.render("feedback", { cssFile: "style" });
+  });
 
 app.listen(appConfig.APP_PORT, () => {
   console.log(`http://localhost:${appConfig.APP_PORT}`);

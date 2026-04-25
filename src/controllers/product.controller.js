@@ -30,9 +30,11 @@ class ProductController {
 
   getAll = async (req, res, next) => {
     try {
-      const products = await this.#_productModel.findAll();
+      const products = await this.#_productModel
+        .find()
+        .populate("category_id");
 
-      res.json(products);
+      res.send(products);
     } catch (error) {
       next(error)
     }
@@ -49,7 +51,7 @@ class ProductController {
       if (!products.length) 
         throw new NotFoundException("No product found");
 
-      res.json(products);
+      res.send(products);
     } catch (error) {
       next(error)
     }
