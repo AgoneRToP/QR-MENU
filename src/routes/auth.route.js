@@ -7,7 +7,15 @@ import { LoginSchema } from "../schemas/auth/login.schema.js";
 const authRouter = Router();
 
 authRouter
-  .post("/register", ValidationMiddleware(RegisterSchema), AuthController.register)
+  .post(
+    "/register",
+    ValidationMiddleware(RegisterSchema),
+    AuthController.register,
+    (req, res) => {
+      console.log("INSIDE AUTH ROUTER");
+      res.send("ok");
+    },
+  )
   .post("/login", ValidationMiddleware(LoginSchema), AuthController.login)
   .post("/refresh", AuthController.refresh);
 

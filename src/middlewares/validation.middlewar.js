@@ -3,6 +3,7 @@ import { BadRequestException } from "../exceptions/bad-request.exception.js";
 export const ValidationMiddleware = (schema, target = `body`) => {
     const ALLOWED_TARGETS = [`body`, `query`, `params`];
 
+    console.log("VALIDATION HIT");
     if (!ALLOWED_TARGETS.includes(target)) {
         throw new Error(`Validation target invalid`);
     }

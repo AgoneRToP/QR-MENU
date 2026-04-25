@@ -6,6 +6,8 @@ import { engine } from "express-handlebars";
 import { connectDB } from "./configs/database.js";
 import appConfig from "./configs/app.config.js";
 
+import { NotFoundException } from "./exceptions/not-found.exception.js";
+
 // routes
 import homeRouter from "./routes/home.js";
 import apiRouter from "./routes/index.js";
@@ -40,45 +42,35 @@ connectDB()
   .then(() => console.log("DB connected"))
   .catch(console.log);
 
+app.use((req, res, next) => {
+  console.log("REQ:", req.method, req.url);
+  next();
+});
+
 // routes
 app.use("/", homeRouter);
 app.use("/api", apiRouter);
 
 // auth pages
-app
-  .get("/auth/login", (req, res) => {
-    res.render("login", { cssFile: "auth" });
-  })
-  .get("/auth/register", (req, res) => {
-    res.render("register", { cssFile: "auth" });
-  })
-  .get("/products", (req, res) => {
-    res.render("product", { cssFile: "style" });
-  })
-  .get("/categories", (req, res) => {
-    res.render("category", { cssFile: "style" });
-  })
-  .get("/feedback", (req, res) => {
-    res.render("feedback", { cssFile: "style" });
-  });
+app.get("/auth/login", (req, res) => {
+  res.render("login", { cssFile: "auth" });
+});
+app.get("/auth/register", (req, res) => {
+  res.render("register", { cssFile: "auth" });
+});
+app.get("/products", (req, res) => {
+  res.render("product", { cssFile: "style" });
+});
+app.get("/categories", (req, res) => {
+  res.render("category", { cssFile: "style" });
+});
+app.get("/feedback", (req, res) => {
+  res.render("feedback", { cssFile: "style" });
+});
 
-app
-  .post("/auth/login", (req, res) => {
-    res.send("login ok");
-  })
-  .post("/auth/register", (req, res) => {
-    console.log(req.body);
-    res.send("register ok");
-  })
-  .post("/products", (req, res) => {
-    res.send("products ok");
-  })
-  .post("/categories", (req, res) => {
-    res.send("categories ok");
-  })
-  .post("/feedback", (req, res) => {
-    res.send("feedback ok");
-  });
+app.all("*splat", (req, res) => {
+  throw new NotFoundException(`Given URL: ${req.url} not found`);
+});
 
 app.listen(appConfig.APP_PORT, () => {
   console.log(`http://localhost:${appConfig.APP_PORT}`);

@@ -25,7 +25,10 @@ class AuthController {
       const { name, email, password } = req.body;
 
       const existingUser = await this.#_userModel.findOne({ email });
-      if (existingUser) throw new ConflictException("Email already taken");
+
+      if (existingUser) {
+        throw new ConflictException("Email already taken");
+      }
 
       const hashedPass = await this.#_hashPassword(password);
 
@@ -42,11 +45,13 @@ class AuthController {
         role: newUser.role,
       });
 
-      res.send({
-        success: true,
-        data: newUser,
-        accessToken,
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        signed: true,
       });
+
+      res.redirect("/");
+      console.log("AFTER CREATE", newUser);
     } catch (error) {
       next(error);
     }
@@ -61,7 +66,7 @@ class AuthController {
 
       const isPassSame = await this.#_comparePass(
         password,
-        existingUser.password
+        existingUser.password,
       );
 
       if (!isPassSame) {
@@ -90,10 +95,7 @@ class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
       });
 
-      res.send({
-        success: true,
-        data: existingUser,
-      });
+      res.redirect("/");
     } catch (error) {
       next(error);
     }
@@ -123,9 +125,9 @@ class AuthController {
   };
 
   #_hashPassword = async (pass) => {
-    const hashedPass = await bcrypt.hash(pass, 20);
+    const hashed = await bcrypt.hash(pass, 20);
 
-    return hashedPass;
+    return hashed;
   };
 
   #_comparePass = async (originalPass, hashedPass) => {
